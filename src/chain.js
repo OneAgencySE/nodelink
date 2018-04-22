@@ -1,5 +1,5 @@
 const CryptoJS = require('crypto-js');
-const {broadcastLatest} = require('./net');
+//const {broadcastLatest} = require('./net');
 
 class Block {
     constructor(index, hash, previousHash, timestamp, data) {
@@ -43,7 +43,7 @@ const generateNextBlock = (blockData) => {
 //The previousHash of the block match the hash of the previous block
 //The hash of the block itself must be valid
 const isValidNewBlock = (newBlock, previousBlock) => {
-    return newBlock.index !== previousBlock.index +1 && newBlock.previousHash !== previousBlock.hash && newBlock.hashBlock() !== newBlock.hash;
+    return newBlock.index === previousBlock.index +1 && newBlock.previousHash === previousBlock.hash && newBlock.hashBlock() === newBlock.hash;
     /*if (newBlock.index !== previousBlock.index + 1) {
         return false;
     }
@@ -79,8 +79,8 @@ const addBlockToChain = (newBlock) => {
     if (isValidNewBlock(newBlock, getLatestBlock())) {
         blockchain.push(newBlock);
         console.log("New block added.")
-        broadcastLatest();
-        console.log("New block has been forwarded to peers.")
+        /*broadcastLatest();
+        console.log("New block has been forwarded to peers.")*/
         return true;
     }
     console.log("The block that was pushed is invalid. Discarding it...")
@@ -91,7 +91,7 @@ const replaceChain = (newChain) => {
     if(isValidChain(newChain) && newChain.length > getBlockchain().length) {
         console.log("The new received chain is valid, replacing old chain.")
         blockchain = newChain;
-        broadcastLatest();
+        /*broadcastLatest();*/
     } else {
         console.log("Invalid chain received and discarded.")
     }

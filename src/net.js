@@ -105,13 +105,14 @@ const handleBlockchainResponse = (receivedBlocks) => {
         } else {
             console.log("Replacing our old chain with the new received chain");
             replaceChain(receivedBlocks);
+            broadcastLatest();
         }
     } else {
         console.log("Received blockchain is shorter than ours. Discarding it..")
     }
 }
 
-const broadcastLatest = ()=> {
+const broadcastLatest = () => {
     broadcast(responseLatestMsg());
 };
 

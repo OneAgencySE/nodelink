@@ -2,7 +2,7 @@ const  bodyParser = require('body-parser');
 const express = require('express');
 
 const {Block, generateNextBlock, getBlockchain} = require('./chain');
-const {connectToPeers, getSockets, initPeerServer} = require('./net');
+const {connectToPeers, getSockets, initPeerServer, broadcastLatest} = require('./net');
 
 const httpPort = process.env.HTTP_PORT || 3001;
 const netPort = process.env.NET_PORT || 6001;
@@ -16,6 +16,7 @@ const initHttpServer = ( myHttpPort) => {
     });
     app.post('/mineBlock', (req, res) => {
         const newBlock = generateNextBlock(req.body.data);
+        broadcastLatest();
         res.send(newBlock);
     });
     app.get('/peers', (req, res) => {
