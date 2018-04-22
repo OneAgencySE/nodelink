@@ -1,12 +1,11 @@
+const  bodyParser = require('body-parser');
+const express = require('express');
 
-//Tests
-let b = new Block(1,"khadkjaehd", "kzdhakdh", 0, "heeey!")
-//console.log(b.calculateHash())
-console.log(calculateHash());
-console.log(genesisBlock)
-let b2 = generateNextBlock("heey");
-console.log(b2);
+const {Block, generateNextBlock, getBlockchain} = require('./chain');
+const {connectToPeers, getSockets, initPeerServer} = require('./net');
 
+const httpPort = process.env.HTTP_PORT || 3001;
+const netPort = process.env.NET_PORT || 6001;
 
 const initHttpServer = ( myHttpPort) => {
     const app = express();
@@ -31,3 +30,14 @@ const initHttpServer = ( myHttpPort) => {
         console.log('Listening http on port: ' + myHttpPort);
     });
 };
+
+initHttpServer(httpPort);
+initPeerServer(netPort);
+
+/*Tests
+let b = new Block(1,"khadkjaehd", "kzdhakdh", 0, "heeey!")
+//console.log(b.calculateHash())
+console.log(calculateHash());
+console.log(genesisBlock)
+let b2 = generateNextBlock("heey");
+console.log(b2);*/

@@ -1,11 +1,9 @@
-//const WebSockets = require('ws');
-import * as WebSocket from 'ws';
-import {addBlockToChain, Block, getBlockchain, getLatestBlock, isValidBlockStructure, replaceChain} from './chain';
-import {Enum} from 'enumify';
-import { write } from 'fs';
+const WebSocket = require('ws');
+const {addBlockToChain, Block, getBlockchain, getLatestBlock, isValidBlockStructure, replaceChain} = require('./chain');
+const {Enum} = require('enumify');
 
-const sockets = Websocket[];
-//const getSockets = () => sockets
+const sockets = [];
+const getSockets = () => sockets
 
 class MessageType extends Enum {}
 MessageType.initEnum(['QUERY_LATEST', 'QUERY_ALL', 'RESPONSE_BLOCKCHAIN']);
@@ -18,11 +16,12 @@ class Message {
 }
 
 const initPeerServer = (peerPort) => {
-    const server = WebSocket.Server({port: peerPort});
+    console.log(peerPort)
+    const server = new WebSocket.Server({port: peerPort});
     server.on('connection', (ws) => {
         initConnection(ws)
     })
-    console.log("Listening for network peers on port: " + port)
+    console.log("Listening for network peers on port: " + peerPort)
 }
 
 const initConnection = (ws) => {
@@ -83,3 +82,47 @@ const responseLatestMsg = () => ({
     'type': MessageType.RESPONSE_BLOCKCHAIN,
     'data': JSON.stringify([getLatestBlock()])
 });
+
+const handleBlockchainResponse = (receivedBlocks) => {
+    if (receivedBlocks.length === 0) {
+        console.log("Got an empty blockchian from peer.");
+        return;
+    }
+    const lastestBlockReceived = receivedBlocks[receivedBlocks.length -1];
+    if (!isValidBlockStructure(lastestBlockReceived)){
+        console.log("The final block in the received chain is invalid, discarding...")
+        return;
+    }
+    const lastestBlockHeld = getLatestBlock();
+    if (lastestBlockHeld.index < lastestBlockReceived.index) {
+        console.log("Found a chain the is longer than ours.")
+        if (lastestBlockHeld.hash === lastestBlockReceived.previousHash) {
+            console.log("Chain was longer by one block, trying to add block.")
+            addBlockToChain(lastestBlockReceived);
+        } else if (receivedBlocks.length === 1) {
+            console.log("Only received one block thats seems to be ahead, querying peers for current chain.")
+            broadcast(queryAllMsg());
+        } else {
+            console.log("Replacing our old chain with the new received chain");
+            replaceChain(receivedBlocks);
+        }
+    } else {
+        console.log("Received blockchain is shorter than ours. Discarding it..")
+    }
+}
+
+const broadcastLatest = ()=> {
+    broadcast(responseLatestMsg());
+};
+
+const connectToPeers = (newPeer) => {
+    const ws = new WebSocket(newPeer);
+    ws.on('open', () => {
+        initConnection(ws);
+    });
+    ws.on('error', () => {
+        console.log('connection failed');
+    });
+};
+
+module.exports = {connectToPeers, broadcastLatest, initPeerServer, getSockets};

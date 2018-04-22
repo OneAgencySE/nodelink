@@ -1,6 +1,5 @@
-//const CryptoJS = require('crypto-js');
-import * as CryptoJS from 'crypto-js';
-import {broadcastLatest} from './net';
+const CryptoJS = require('crypto-js');
+const {broadcastLatest} = require('./net');
 
 class Block {
     constructor(index, hash, previousHash, timestamp, data) {
@@ -23,11 +22,11 @@ const genesisBlock = new Block(
     0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', null, 1465154705, 'my genesis block!!'
 );
 
-let blockChain = [genesisBlock];
+let blockchain = [genesisBlock];
 
-const getLatestBlock = () => blockChain[blockChain.length -1];
-const getGenesisBlock = () => blockChain[0];
-const getBlockChain = () => blockChain;
+const getLatestBlock = () => blockchain[blockchain.length -1];
+const getGenesisBlock = () => blockchain[0];
+const getBlockchain = () => blockchain;
 
 const generateNextBlock = (blockData) => {
     const previousBlock = getLatestBlock();
@@ -36,6 +35,7 @@ const generateNextBlock = (blockData) => {
     const previousHash = previousBlock.hash;
     const hash = calculateHash(nextIndex, previousHash, timestamp, blockData);
     const nextBlock = new Block(nextIndex, hash, previousHash, timestamp, blockData);
+    addBlockToChain(nextBlock);
     return nextBlock;
 }
 
@@ -60,29 +60,41 @@ const isValidBlockStructure = (block) => {
         && typeof block.data === 'string';
 }
 
-const isValidChain = (blockChainToValidate) => {
+const isValidChain = (blockchainToValidate) => {
     const isValidGenesis = (block) => {
         return JSON.stringify(block) === JSON.stringify(getGenesisBlock());
     }
-    const isValidRestOfChain = (blockChainToValidate) => {
-        for (let i = 1; i < blockChainToValidate.length; i++) {
-            if(!isValidNewBlock(blockChainToValidate[i], blockChainToValidate[i-1])) {
+    const isValidRestOfChain = (blockchainToValidate) => {
+        for (let i = 1; i < blockchainToValidate.length; i++) {
+            if(!isValidNewBlock(blockchainToValidate[i], blockchainToValidate[i-1])) {
                 return false;
             }
         }
         return true;
     }
-    return isValidGenesis(blockChainToValidate[0]) && isValidRestOfChain(blockChainToValidate);    
+    return isValidGenesis(blockchainToValidate[0]) && isValidRestOfChain(blockchainToValidate);    
 }
 
+const addBlockToChain = (newBlock) => {
+    if (isValidNewBlock(newBlock, getLatestBlock())) {
+        blockchain.push(newBlock);
+        console.log("New block added.")
+        broadcastLatest();
+        console.log("New block has been forwarded to peers.")
+        return true;
+    }
+    console.log("The block that was pushed is invalid. Discarding it...")
+    return false;
+};
+
 const replaceChain = (newChain) => {
-    if(isValidChain(newChain) && newChain.length > getBlockChain().length) {
+    if(isValidChain(newChain) && newChain.length > getBlockchain().length) {
         console.log("The new received chain is valid, replacing old chain.")
-        blockChain = newChain;
+        blockchain = newChain;
         broadcastLatest();
     } else {
         console.log("Invalid chain received and discarded.")
     }
 }
 
-export {Block, getBlockchain, getLatestBlock, generateNextBlock, isValidBlockStructure, replaceChain, addBlockToChain};
+module.exports = {Block, getBlockchain, getLatestBlock, generateNextBlock, isValidBlockStructure, replaceChain, addBlockToChain};
