@@ -9,14 +9,11 @@ class Block {
         this.data = data; //String
         this.hash = hash; //String
     }
-    hashBlock() {
-        return CryptoJS.SHA256(this.index + this.previousHash + this.timestamp + this.data).toString();
-    }
 }
 
 const calculateHash = (index, previousHash, timestamp, data) => CryptoJS.SHA256(index + previousHash + timestamp + data).toString();
 
-//const calculateHashForBlock = (block) => calculateHash(block.index, block.previousHash, block.timestamp, block.data)
+const calculateHashForBlock = (block) => calculateHash(block.index, block.previousHash, block.timestamp, block.data)
 
 const genesisBlock = new Block(
     0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', null, 1465154705, 'my genesis block!!'
@@ -43,7 +40,7 @@ const generateNextBlock = (blockData) => {
 //The previousHash of the block match the hash of the previous block
 //The hash of the block itself must be valid
 const isValidNewBlock = (newBlock, previousBlock) => {
-    return newBlock.index === previousBlock.index +1 && newBlock.previousHash === previousBlock.hash && newBlock.hashBlock() === newBlock.hash;
+    return newBlock.index === previousBlock.index +1 && newBlock.previousHash === previousBlock.hash && calculateHashForBlock(newBlock) === newBlock.hash;
     /*if (newBlock.index !== previousBlock.index + 1) {
         return false;
     }
