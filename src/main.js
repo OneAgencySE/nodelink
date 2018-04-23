@@ -16,7 +16,7 @@ const initHttpServer = ( myHttpPort) => {
     });
     app.post('/mineBlock', (req, res) => {
         const newBlock = generateNextBlock(req.body.data);
-        broadcastLatest();
+        broadcastLatest(); //Check that this really works. Should work, but node is async and all... I think... G-night!
         res.send(newBlock);
     });
     app.get('/peers', (req, res) => {
