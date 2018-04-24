@@ -56,12 +56,6 @@ const findBlock = (index, previousHash, timestamp, data, difficulty) => {
 //The hash of the block itself must be valid
 const isValidNewBlock = (newBlock, previousBlock) => {
     return newBlock.index === previousBlock.index +1 && newBlock.previousHash === previousBlock.hash && hasValidHash(newBlock);
-    /*if (newBlock.index !== previousBlock.index + 1) {
-        return false;
-    }
-    if(newBlock.previousHash !== previousBlock.hash) {
-        return false;
-    }*/
 }
 
 const isValidBlockStructure = (block) => {
