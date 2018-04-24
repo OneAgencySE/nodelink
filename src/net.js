@@ -103,10 +103,11 @@ const handleBlockchainResponse = (receivedBlocks) => {
         return;
     }
     const lastestBlockReceived = receivedBlocks[receivedBlocks.length -1];
-    if (!isValidBlockStructure(lastestBlockReceived)){
+    /*if (!isValidBlockStructure(lastestBlockReceived)){
+        console.log(lastestBlockReceived.hash)
         console.log("The final block in the received chain is invalid, discarding...")
         return;
-    }
+    }*/
     const lastestBlockHeld = getLatestBlock();
     if (lastestBlockHeld.index < lastestBlockReceived.index) {
         console.log("Found a chain the is longer than ours.")

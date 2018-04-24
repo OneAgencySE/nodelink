@@ -1,11 +1,11 @@
 const  bodyParser = require('body-parser');
 const express = require('express');
 
-const {Block, generateNextBlock, getBlockchain} = require('./chain');
+const {Block, generateNextBlock, getBlockchain, getLatestBlock} = require('./chain');
 const {connectToPeers, getSockets, initPeerServer, broadcastLatest} = require('./net');
 
-const httpPort = process.env.HTTP_PORT || 4001;
-const netPort = process.env.NET_PORT || 5001;
+const httpPort = process.env.HTTP_PORT || 3001;
+const netPort = process.env.NET_PORT || 6001;
 
 const initHttpServer = ( myHttpPort) => {
     const app = express();
@@ -15,9 +15,10 @@ const initHttpServer = ( myHttpPort) => {
         res.send(getBlockchain());
     });
     app.post('/mineBlock', (req, res) => {
-        const newBlock = generateNextBlock(req.body.data);
-        broadcastLatest(); //Check that this really works. Should work, but node is async and all... I think... G-night!
-        res.send(newBlock);
+        if(generateNextBlock(req.body.data)) {
+            broadcastLatest(); //Check that this really works. Should work, but node is async and all... I think... G-night!
+            res.send(getLatestBlock());
+        }
     });
     app.get('/peers', (req, res) => {
         res.send(getSockets().map(( s) => s._socket.remoteAddress + ':' + s._socket.remotePort));

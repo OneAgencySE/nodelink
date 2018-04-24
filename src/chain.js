@@ -1,22 +1,27 @@
 const CryptoJS = require('crypto-js');
+const {hexToBinary} = require('./util');
 //const {broadcastLatest} = require('./net');
 
+const FIXED_DIFFICULTY = 5
+
 class Block {
-    constructor(index, hash, previousHash, timestamp, data) {
+    constructor(index, hash, previousHash, timestamp, data, difficulty, nonce) {
         this.index = index; //Number
         this.previousHash = previousHash; //String
         this.timestamp = timestamp; //Number
         this.data = data; //String
         this.hash = hash; //String
+        this.difficulty = FIXED_DIFFICULTY;
+        this.nonce = nonce;
     }
 }
 
-const calculateHash = (index, previousHash, timestamp, data) => CryptoJS.SHA256(index + previousHash + timestamp + data).toString();
+const calculateHash = (index, previousHash, timestamp, data, difficulty, nonce) => CryptoJS.SHA256(index + previousHash + timestamp + data + difficulty + nonce).toString();
 
-const calculateHashForBlock = (block) => calculateHash(block.index, block.previousHash, block.timestamp, block.data)
+const calculateHashForBlock = (block) => calculateHash(block.index, block.previousHash, block.timestamp, block.data, block.difficulty, block.nonce)
 
 const genesisBlock = new Block(
-    0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', null, 1465154705, 'my genesis block!!'
+    0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', null, 1465154705, 'my genesis block!!', 0, 0
 );
 
 let blockchain = [genesisBlock];
@@ -30,17 +35,27 @@ const generateNextBlock = (blockData) => {
     const nextIndex = previousBlock.index +1;
     const timestamp = new Date().getTime() / 1000;
     const previousHash = previousBlock.hash;
-    const hash = calculateHash(nextIndex, previousHash, timestamp, blockData);
-    const nextBlock = new Block(nextIndex, hash, previousHash, timestamp, blockData);
-    addBlockToChain(nextBlock);
-    return nextBlock;
+    const nextBlock = findBlock(nextIndex, previousHash, timestamp, blockData, FIXED_DIFFICULTY);
+    return addBlockToChain(nextBlock);
 }
+
+const findBlock = (index, previousHash, timestamp, data, difficulty) => {
+    let nonce = 0;
+    while (true) {
+        console.log("Mining" + nonce)
+        const hash = calculateHash(index, previousHash, timestamp, data, difficulty, nonce);
+        if (hashMatchesDifficulty(hash, difficulty)) {
+            return new Block(index, hash, previousHash, timestamp, data, difficulty, nonce);
+        }
+        nonce++;
+    }
+};
 
 //The index of the block must be one number larger than the previous
 //The previousHash of the block match the hash of the previous block
 //The hash of the block itself must be valid
 const isValidNewBlock = (newBlock, previousBlock) => {
-    return newBlock.index === previousBlock.index +1 && newBlock.previousHash === previousBlock.hash && calculateHashForBlock(newBlock) === newBlock.hash;
+    return newBlock.index === previousBlock.index +1 && newBlock.previousHash === previousBlock.hash && hasValidHash(newBlock);
     /*if (newBlock.index !== previousBlock.index + 1) {
         return false;
     }
@@ -54,7 +69,23 @@ const isValidBlockStructure = (block) => {
         && typeof block.hash === 'string'
         && typeof block.previousHash === 'string'
         && typeof block.timestamp === 'number'
-        && typeof block.data === 'string';
+        && typeof block.data === 'string'
+        && typeof block.difficulty === 'number'
+        && typeof block.nonce === 'number';
+}
+
+const hasValidHash = (block) => {
+    console.log("The hash matches block content? " + hashMatchesBlockContent(block))
+    console.log("The hash matches difficulty? " + hashMatchesDifficulty(block.hash, block.difficulty))
+    return hashMatchesBlockContent(block) && hashMatchesDifficulty(block.hash, block.difficulty)
+}
+
+const hashMatchesDifficulty = (hash, difficulty) => {
+    return hexToBinary(hash).startsWith('0'.repeat(difficulty))
+}
+
+const hashMatchesBlockContent = (block) => {
+    return block.hash === calculateHashForBlock(block);
 }
 
 const isValidChain = (blockchainToValidate) => {
