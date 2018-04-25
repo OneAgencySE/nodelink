@@ -28,6 +28,12 @@ const initHttpServer = ( myHttpPort) => {
         res.send("Peer added.");
     });
 
+    app.get("/interface", (req, res) => {
+        res.sendFile(__dirname + "/interface.html")
+    })
+
+    app.use(express.static('public'))
+
     app.listen(myHttpPort, () => {
         console.log('Listening http on port: ' + myHttpPort);
     });

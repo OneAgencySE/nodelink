@@ -37,7 +37,7 @@ const JsonToObject = (json) => {
     try {
         return JSON.parse(json);
     } catch (e) {
-        console.log("Json could not be parsed... Mesaage: \n" + e)
+        console.log("Json could not be parsed... Message: \n" + e)
         return null;
     }
 }

@@ -100,6 +100,7 @@ const isValidChain = (blockchainToValidate) => {
 const addBlockToChain = (newBlock) => {
     if (isValidNewBlock(newBlock, getLatestBlock())) {
         blockchain.push(newBlock);
+        //pushToInterface(newBlock);
         console.log("New block added.")
         /*broadcastLatest();
         console.log("New block has been forwarded to peers.")*/
