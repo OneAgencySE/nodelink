@@ -76,7 +76,7 @@ window.onload = function() {
 
     const newBlockCausesAGap = function(blocksObj) {
       var highestBlockIndex = blocksObj[blocksObj.length -1].index;
-      return highestBlockIndex + 1 > currentChainLength;
+      return highestBlockIndex > currentChainLength + 1;
     }
 
     const handleData = function(blocks) {
@@ -84,6 +84,7 @@ window.onload = function() {
       if(blocksObj.length > 1) {
         clearFeed();
       }
+      //addMultipleToFeed(blocksObj);
       //console.log(blocksObj[blocksObj.length -1].index+1 > currentChainLength)
       if(newBlockCausesAGap(blocksObj)) {
         axios.get("/blocks")
@@ -96,11 +97,12 @@ window.onload = function() {
       } else {
         console.log("Adding single block")
         addMultipleToFeed(blocksObj);
-      }    
+      }
     }
 
     const addMultipleToFeed = function(blocks) {
       for(var i = 0; i < blocks.length; i ++) {
+        console.log("Adding node for block: " + blocks[i].index)
         addToFeed(blocks[i])
       }
       currentChainLength = blocks[blocks.length -1].index
