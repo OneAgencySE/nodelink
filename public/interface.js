@@ -104,7 +104,7 @@ window.onload = function() {
         addToFeed(blocks[i])
       }
       currentChainLength = blocks[blocks.length -1].index
-      console.log(currentChainLength)
+      //console.log(currentChainLength)
     }
 
     const buildBlockDiv = function(block) {
