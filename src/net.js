@@ -18,7 +18,6 @@ class Message {
 }
 
 const initPeerServer = (peerPort) => {
-    console.log(peerPort)
     const server = new WebSocket.Server({port: peerPort});
     server.on('connection', (ws) => {
         initConnection(ws)
@@ -133,7 +132,7 @@ const broadcastLatest = () => {
 };
 
 const connectToPeers = (newPeer) => {
-    const ws = new WebSocket(newPeer);
+    const ws = new WebSocket("ws://" + newPeer);
     ws.on('open', () => {
         initConnection(ws);
     });

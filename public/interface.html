@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>One Chain</title>
+    <link rel="stylesheet" href="static/interface.css">
+    <!--link href='static/Menlo-Regular.ttf' rel='stylesheet' type='text/css'-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="static/interface.js"></script>
+  </head>
+  <body>
+    <!-- page content -->
+    <div class="img-container">
+      <img src="static/one-chain-logo.png"/>
+    </div>
+    <div class="container">
+      <div id="blocks">
+
+      </div>
+
+      <div class="terminal" id="terminal">
+        <div id="terminal-out" class="terminal-out">
+          <p>A minimal blockchian by One Agency</p>
+        </div>
+        <form onsubmit="sendCommand(event)">
+          <input id="command" type="text" placeholder="Enter a command">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

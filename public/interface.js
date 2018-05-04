@@ -1,11 +1,53 @@
-window.onload = function() {
-    var feed = document.getElementById('log');
+function sendCommand(e) {
+  e.preventDefault();
+  var command = document.getElementById("command").value;
+  appendToTerminal("<<< " + command);
+  var commands = command.split(" ");
+  axios.post('/' + commands[0], {
+    data: commands[1]
+  })
+  .then(function (response) {
+    buildResponseMessage(commands, response);
+    //appendToTerminal(msg)
+  })
+  .catch(function (error) {
+    appendToTerminal(">>> an error occurred: " + error)
+  });
+}
 
-    console.log("Live")
+function buildResponseMessage(commands, response){
+  
+  if(commands[0].toLowerCase() === "mineblock") {
+    appendToTerminal(">>> " + response.data.hash);
+  } else if(commands[0].toLowerCase() === "addpeer") {
+    setTimeout( function() {
+    axios.get("/peers")
+    .then(function (response) {
+      var msg = response.data.includes(commands[1]) ? "Node was added" : "Node was NOT added";
+      appendToTerminal(">>> " + msg);
+    }).catch(function (error) {
+      appendToTerminal(">>> an error occurred when getting a list of connected nodes " + error);
+    })
+  },1000);
+  }
+}
+
+function appendToTerminal(text) {
+  var terminal = document.getElementById("terminal-out")
+  var line = document.createElement("p")
+  line.innerHTML = text;
+  terminal.appendChild(line);
+}
+
+
+window.onload = function() {
+    var feed = document.getElementById('blocks');
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+    address = 'ws://localhost:6001';
   
-    var connection = new WebSocket('ws://127.0.0.1:6001');
+    var connection = new WebSocket(address);
 
     console.log(connection)
   
@@ -19,35 +61,34 @@ window.onload = function() {
     };
   
     connection.onmessage = function (message) {
-        console.log("Incomming msg data" + message.data)
-        var object = JsonToObject(message.data)
-        handleData(object)
+        var blocks = JsonToObject(message.data)
+        if (blocks.data !== null) {
+          handleData(blocks.data)
+        }
     };
 
-    const handleData = function(data) {
-      if(JsonToObject(data.data).length > 1) {
+    const handleData = function(blocks) {
+      if(JsonToObject(blocks).length > 1) {
         while (feed.firstChild) {
           feed.removeChild(feed.firstChild);
         }
       }
-      for(var i = 0; i < JsonToObject(data.data).length; i ++) {
-        addToFeed(JsonToObject(data.data)[i].data)
+      for(var i = 0; i < JsonToObject(blocks).length; i ++) {
+        addToFeed(JsonToObject(blocks)[i])
       }
-      /*Check if it is contains genesis block
-      if(JsonToObject(data.data)[0].index === 0) {
-        while (feed.firstChild) {
-          feed.removeChild(feed.firstChild);
-        }
-        console.log(data)
-      } else {
-        addToFeed(JsonToObject(data.data)[0].data);
-      }*/
     }
 
-    const addToFeed = function(parsedData) {
-      var ptest = document.createElement("p");
-      ptest.innerHTML = parsedData;
-      feed.appendChild(ptest);
+    const buildBlockDiv = function(block) {
+      var blockDiv = document.createElement("div");
+      blockDiv.className = "block";
+
+      blockDiv.appendChild(document.createElement('pre')).innerHTML = syntaxHighlight(JSON.stringify(block, null, 4))
+      return blockDiv;
+    }
+
+    const addToFeed = function(block) {
+      var blockDiv = buildBlockDiv(block);
+      feed.insertBefore(blockDiv, feed.firstChild);
     }
 
     const JsonToObject = function(json) {
@@ -59,5 +100,24 @@ window.onload = function() {
             json);
         return;
       }
+    }
+
+    function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+          var cls = 'number';
+          if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                  cls = 'key';
+              } else {
+                  cls = 'string';
+              }
+          } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+          } else if (/null/.test(match)) {
+              cls = 'null';
+          }
+          return '<span class="' + cls + '">' + match + '</span>';
+      });
     }
   }

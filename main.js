@@ -1,8 +1,8 @@
 const  bodyParser = require('body-parser');
 const express = require('express');
 
-const {Block, generateNextBlock, getBlockchain, getLatestBlock} = require('./chain');
-const {connectToPeers, getSockets, initPeerServer, broadcastLatest} = require('./net');
+const {Block, generateNextBlock, getBlockchain, getLatestBlock} = require('./src/chain');
+const {connectToPeers, getSockets, initPeerServer, broadcastLatest} = require('./src/net');
 
 const httpPort = process.env.HTTP_PORT || 3001;
 const netPort = process.env.NET_PORT || 6001;
@@ -24,15 +24,15 @@ const initHttpServer = ( myHttpPort) => {
         res.send(getSockets().map(( s) => s._socket.remoteAddress + ':' + s._socket.remotePort));
     });
     app.post('/addPeer', (req, res) => {
-        connectToPeers(req.body.peer);
-        res.send("Peer added.");
+        connectToPeers(req.body.data)
+        res.send("Trying to add peer");
     });
 
     app.get("/interface", (req, res) => {
-        res.sendFile(__dirname + "/interface.html")
+        res.sendFile(__dirname + "/public/interface.html")
     })
 
-    app.use(express.static('public'))
+    app.use("/static", express.static(__dirname + '/public'))
 
     app.listen(myHttpPort, () => {
         console.log('Listening http on port: ' + myHttpPort);

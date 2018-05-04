@@ -2,7 +2,7 @@ const CryptoJS = require('crypto-js');
 const {hexToBinary} = require('./util');
 //const {broadcastLatest} = require('./net');
 
-const FIXED_DIFFICULTY = 5
+const FIXED_DIFFICULTY = 16
 
 class Block {
     constructor(index, hash, previousHash, timestamp, data, difficulty, nonce) {
@@ -21,7 +21,7 @@ const calculateHash = (index, previousHash, timestamp, data, difficulty, nonce) 
 const calculateHashForBlock = (block) => calculateHash(block.index, block.previousHash, block.timestamp, block.data, block.difficulty, block.nonce)
 
 const genesisBlock = new Block(
-    0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', null, 1465154705, 'my genesis block!!', 0, 0
+    0, '816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7', null, 1465154705, 'One chain genesis block!', 0, 0
 );
 
 let blockchain = [genesisBlock];
