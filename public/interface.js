@@ -39,6 +39,7 @@ function appendToTerminal(text) {
   terminal.appendChild(line);
 }
 
+var currentChainLength = 0;
 
 window.onload = function() {
     var feed = document.getElementById('blocks');
@@ -67,15 +68,43 @@ window.onload = function() {
         }
     };
 
+    const clearFeed = function() {
+      while (feed.firstChild) {
+        feed.removeChild(feed.firstChild);
+      }
+    }
+
+    const newBlockCausesAGap = function(blocksObj) {
+      var highestBlockIndex = blocksObj[blocksObj.length -1].index;
+      return highestBlockIndex + 1 > currentChainLength;
+    }
+
     const handleData = function(blocks) {
-      if(JsonToObject(blocks).length > 1) {
-        while (feed.firstChild) {
-          feed.removeChild(feed.firstChild);
-        }
+      var blocksObj = JsonToObject(blocks);
+      if(blocksObj.length > 1) {
+        clearFeed();
       }
-      for(var i = 0; i < JsonToObject(blocks).length; i ++) {
-        addToFeed(JsonToObject(blocks)[i])
+      //console.log(blocksObj[blocksObj.length -1].index+1 > currentChainLength)
+      if(newBlockCausesAGap(blocksObj)) {
+        axios.get("/blocks")
+        .then(function (response) {
+          clearFeed()
+          addMultipleToFeed(response.data)
+        }).catch(function (error) {
+          alert("Please reload your browser" + error);
+        })
+      } else {
+        console.log("Adding single block")
+        addMultipleToFeed(blocksObj);
+      }    
+    }
+
+    const addMultipleToFeed = function(blocks) {
+      for(var i = 0; i < blocks.length; i ++) {
+        addToFeed(blocks[i])
       }
+      currentChainLength = blocks[blocks.length -1].index
+      console.log(currentChainLength)
     }
 
     const buildBlockDiv = function(block) {
