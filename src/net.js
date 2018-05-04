@@ -113,6 +113,7 @@ const handleBlockchainResponse = (receivedBlocks) => {
         if (lastestBlockHeld.hash === lastestBlockReceived.previousHash) {
             console.log("Chain was longer by one block, trying to add block.")
             addBlockToChain(lastestBlockReceived);
+            broadcastLatest()
         } else if (receivedBlocks.length === 1) {
             console.log("Only received one block thats seems to be ahead, querying peers for current chain.")
             broadcast(queryAllMsg());
