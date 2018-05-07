@@ -42,10 +42,13 @@ const generateNextBlock = (blockData) => {
 const findBlock = (index, previousHash, timestamp, data, difficulty) => {
     let nonce = 0;
     while (true) {
-        console.log("Mining" + nonce)
-        const hash = calculateHash(index, previousHash, timestamp, data, difficulty, nonce);
+        const hash = calculateHash(
+            index, previousHash, timestamp, data, difficulty, nonce
+        );
         if (hashMatchesDifficulty(hash, difficulty)) {
-            return new Block(index, hash, previousHash, timestamp, data, difficulty, nonce);
+            return new Block(
+                index, hash, previousHash, timestamp, data, difficulty, nonce
+            );
         }
         nonce++;
     }
@@ -100,10 +103,7 @@ const isValidChain = (blockchainToValidate) => {
 const addBlockToChain = (newBlock) => {
     if (isValidNewBlock(newBlock, getLatestBlock())) {
         blockchain.push(newBlock);
-        //pushToInterface(newBlock);
         console.log("New block added.")
-        /*broadcastLatest();
-        console.log("New block has been forwarded to peers.")*/
         return true;
     }
     console.log("The block that was pushed is invalid. Discarding it...")
@@ -114,7 +114,6 @@ const replaceChain = (newChain) => {
     if(isValidChain(newChain) && newChain.length > getBlockchain().length) {
         console.log("The new received chain is valid, replacing old chain.")
         blockchain = newChain;
-        /*broadcastLatest();*/
     } else {
         console.log("Invalid chain received and discarded.")
     }

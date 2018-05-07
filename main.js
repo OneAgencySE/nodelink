@@ -4,8 +4,8 @@ const express = require('express');
 const {Block, generateNextBlock, getBlockchain, getLatestBlock} = require('./src/chain');
 const {connectToPeers, getSockets, initPeerServer, broadcastLatest} = require('./src/net');
 
-const httpPort = process.env.HTTP_PORT || 3001;
-const netPort = process.env.NET_PORT || 6001;
+const httpPort = process.env.HTTP_PORT || 4001;
+const netPort = process.env.NET_PORT || 5001;
 
 const initHttpServer = ( myHttpPort) => {
     const app = express();
@@ -16,7 +16,7 @@ const initHttpServer = ( myHttpPort) => {
     });
     app.post('/mineBlock', (req, res) => {
         if(generateNextBlock(req.body.data)) {
-            broadcastLatest(); //Check that this really works. Should work, but node is async and all... I think... G-night!
+            broadcastLatest(); 
             res.send(getLatestBlock());
         }
     });
@@ -41,11 +41,3 @@ const initHttpServer = ( myHttpPort) => {
 
 initHttpServer(httpPort);
 initPeerServer(netPort);
-
-/*Tests
-let b = new Block(1,"khadkjaehd", "kzdhakdh", 0, "heeey!")
-//console.log(b.calculateHash())
-console.log(calculateHash());
-console.log(genesisBlock)
-let b2 = generateNextBlock("heey");
-console.log(b2);*/

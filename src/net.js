@@ -5,17 +5,7 @@ const {Enum} = require('enumify');
 const sockets = [];
 const getSockets = () => sockets
 
-//class MessageType extends Enum {}
-//MessageType.initEnum(['QUERY_LATEST', 'QUERY_ALL', 'RESPONSE_BLOCKCHAIN']);
-
 const MessageType = Object.freeze({"QUERY_LATEST":1, "QUERY_ALL":2, "RESPONSE_BLOCKCHAIN":3})
-
-class Message {
-    constructor(type, data) {
-        this.type = typeof type === MessageType ? type : 999;
-        this.data = data;
-    }
-}
 
 const initPeerServer = (peerPort) => {
     const server = new WebSocket.Server({port: peerPort});
@@ -70,12 +60,21 @@ const initMessageHandler = (ws) => {
     })
 }
 
+//ws is a WebSocket
+
 const write = (ws, message) => ws.send(JSON.stringify(message));
+
 const broadcast = (message) => sockets.forEach((socket) => write(socket, message));
 
-const queryChainLengthMsg = () => ({'type': MessageType.QUERY_LATEST, 'data': null});
+const queryChainLengthMsg = () => ({
+    'type': MessageType.QUERY_LATEST, 
+    'data': null
+});
 
-const queryAllMsg = () => ({'type': MessageType.QUERY_ALL, 'data': null});
+const queryAllMsg = () => ({
+    'type': MessageType.QUERY_ALL, 
+    'data': null
+});
 
 const responseChainMsg = () => ({
     'type': MessageType.RESPONSE_BLOCKCHAIN, 
@@ -102,11 +101,11 @@ const handleBlockchainResponse = (receivedBlocks) => {
         return;
     }
     const lastestBlockReceived = receivedBlocks[receivedBlocks.length -1];
-    /*if (!isValidBlockStructure(lastestBlockReceived)){
+    if (!isValidBlockStructure(lastestBlockReceived)){
         console.log(lastestBlockReceived.hash)
         console.log("The final block in the received chain is invalid, discarding...")
         return;
-    }*/
+    }
     const lastestBlockHeld = getLatestBlock();
     if (lastestBlockHeld.index < lastestBlockReceived.index) {
         console.log("Found a chain the is longer than ours.")
