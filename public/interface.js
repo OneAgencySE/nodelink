@@ -49,7 +49,8 @@ function sendCommand(e) {
   if (commands.length === 1) {
     commands.unshift("mineblock");
     commands[1] += " | " + fullName; 
-  }
+  } 
+  console.log(commands)
   axios.post('/' + commands[0], {
     data: commands[1]
   })
