@@ -4,7 +4,13 @@
     <meta charset="utf-8">
     <title>One Chain</title>
     <link rel="stylesheet" href="static/interface.css">
-    <!--link href='static/Menlo-Regular.ttf' rel='stylesheet' type='text/css'-->
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Inconsolata">
+          <style>
+            * {
+              font-family: 'Inconsolata', serif;
+            }
+          </style>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="static/interface.js"></script>
   </head>
@@ -13,6 +19,8 @@
     <div class="img-container">
       <img src="static/one-chain-logo.png"/>
     </div>
+    <h1>Vinn en lunch med One Agency's blockchain expert, Viktor Tigerström</h1>
+    <h1>och grundaren för Swedish Blockchsin Association, Benjamin Dahl</h1>
     <div class="container">
       <div id="blocks">
 
@@ -24,6 +32,8 @@
         </div>
         <form onsubmit="sendCommand(event)">
           <input id="command" type="email" placeholder="Enter your email">
+          <input id="name" type="text" placeholder="Enter your full name">
+          <input style="display: none" required type="submit" value="Submit">
         </form>
       </div>
     </div>

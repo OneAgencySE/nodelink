@@ -33,18 +33,22 @@ window.onload = function() {
     var input = document.getElementById("command")
     if(input.type === "email") {
       input.type = "text";
+      console.log("Off")
     } else {
       input.type = "email";
+      console.log("On")
     }
   }
 
 function sendCommand(e) {
   e.preventDefault();
   var command = document.getElementById("command").value;
-  appendToTerminal("<<< " + command);
+  var fullName = document.getElementById("name").value;
   var commands = command.split(": ");
+  appendToTerminal("<<< " + command);
   if (commands.length === 1) {
     commands.unshift("mineblock");
+    commands[1] += " | " + fullName; 
   }
   axios.post('/' + commands[0], {
     data: commands[1]

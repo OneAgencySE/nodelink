@@ -1,6 +1,10 @@
 body {
     text-align: left;
-    background: white;
+    background: rgb(255, 255, 255);
+}
+
+h1 {
+    text-align: center;
 }
 
 @font-face {
@@ -16,7 +20,7 @@ body {
 }
 
 .container {
-    padding: 0 200px;
+    padding: 0 50px;
     /*display: flex;*/
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -51,12 +55,9 @@ body {
     padding: 20px;
     margin: 15px;
     border-radius: 6px;
-
-    /* { "index":0, "previo: */
-    font-family: Menlo-Regular;
-    font-size: 0.8rem;
+    font-size: 1.2rem;
     letter-spacing: 0;
-    line-height: 21px;
+    line-height: 31px;
 
     grid-area: blocks;
 

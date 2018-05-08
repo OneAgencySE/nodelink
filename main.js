@@ -32,6 +32,10 @@ const initHttpServer = ( myHttpPort) => {
         res.sendFile(__dirname + "/public/interface.html")
     })
 
+    app.get("/display", (req, res) => {
+        res.sendFile(__dirname + "/public/display.html")
+    })
+
     app.use("/static", express.static(__dirname + '/public'))
 
     app.listen(myHttpPort, () => {
