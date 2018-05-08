@@ -4,8 +4,8 @@ const express = require('express');
 const {Block, generateNextBlock, getBlockchain, getLatestBlock} = require('./src/chain');
 const {connectToPeers, getSockets, initPeerServer, broadcastLatest} = require('./src/net');
 
-const httpPort = process.env.HTTP_PORT || 4001;
-const netPort = process.env.NET_PORT || 5001;
+const httpPort = process.env.HTTP_PORT || 3001;
+const netPort = process.env.NET_PORT || 6001;
 
 const initHttpServer = ( myHttpPort) => {
     const app = express();

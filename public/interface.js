@@ -6,7 +6,7 @@ window.onload = function() {
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-    address = 'ws://localhost:5001';
+    address = 'ws://localhost:6001';
   
     connection = new WebSocket(address);
 
