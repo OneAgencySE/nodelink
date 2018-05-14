@@ -105,7 +105,7 @@ const addBlockToChain = (newBlock) => {
         console.log("New block added.")
         logger.log({
             level: 'info',
-            message: JSON.stringify(newBlock)
+            message: newBlock.data
         })
         return true;
     }
