@@ -1,6 +1,5 @@
 const CryptoJS = require('crypto-js');
 const {hexToBinary} = require('./util');
-//const {broadcastLatest} = require('./net');
 
 const FIXED_DIFFICULTY = 16
 
