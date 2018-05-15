@@ -1,4 +1,4 @@
-# nodelink
+# onechain
 A minimal blockchain built in Node JS.
 
 ## Purpose
