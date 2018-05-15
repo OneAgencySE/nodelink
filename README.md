@@ -6,7 +6,7 @@ To get a basic understanding of the distributed blockchain concept by building o
 
 ## Installation
 
-`git clone https://github.com/OneAgencySE/nodelink`
+`git clone https://github.com/OneAgencySE/onechain`
 
 `npm install`
 
