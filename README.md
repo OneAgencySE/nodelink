@@ -6,7 +6,7 @@ To get a basic understanding of the distributed blockchain concept by building o
 
 ## Installation
 
-`git clone https://github.com/tiptop96/nodelink/`
+`git clone https://github.com/OneAgencySE/nodelink`
 
 `npm install`
 
@@ -14,4 +14,10 @@ To get a basic understanding of the distributed blockchain concept by building o
 
 `npm start`
 
-`localhost:3001/interface`
+`http://localhost:3001/interface`
+
+
+## SHA256 Hash Generator
+
+Is found at https://passwordsgenerator.net/sha256-hash-generator/
+
