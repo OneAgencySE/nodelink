@@ -11,6 +11,10 @@ const initHttpServer = ( myHttpPort) => {
     const app = express();
     app.use(bodyParser.json());
 
+    app.get('/', (req,res) => {
+        res.redirect(301, '/interface',)
+    });
+
     app.get('/blocks', (req, res) => {
         res.send(getBlockchain());
     });
