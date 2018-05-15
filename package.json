@@ -1,5 +1,5 @@
 {
-  "name": "nodelink",
+  "name": "onechain",
   "version": "1.0.0",
   "description": "A simple node.js based blockchain",
   "main": "main.js",
