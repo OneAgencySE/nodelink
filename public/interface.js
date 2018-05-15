@@ -29,54 +29,46 @@ window.onload = function() {
     };
   }
 
-  function mailSwitch() {
-    var input = document.getElementById("command")
-    if(input.type === "email") {
-      input.type = "text";
-      console.log("Off")
-    } else {
-      input.type = "email";
-      console.log("On")
-    }
-  }
-
-function sendCommand(e) {
+function mineBlock(e) {
   e.preventDefault();
-  var command = document.getElementById("command").value;
+  var email = document.getElementById("email").value;
   var fullName = document.getElementById("name").value;
-  var commands = command.split(": ");
-  appendToTerminal("<<< " + command);
-  if (commands.length === 1) {
-    commands.unshift("mineblock");
-    commands[1] += " | " + fullName; 
-  } 
-  console.log(commands)
-  axios.post('/' + commands[0], {
-    data: commands[1]
+  var data = email + " | " + fullName;
+  appendToTerminal("<<< " + data);
+  axios.post('/mineblock', {
+    data: data
   })
   .then(function (response) {
-    buildResponseMessage(commands, response);
+    appendToTerminal(response.data.hash);
   })
   .catch(function (error) {
     appendToTerminal(">>> an error occurred: " + error)
   });
 }
 
-function buildResponseMessage(commands, response){
-  
-  if(commands[0].toLowerCase() === "mineblock") {
-    appendToTerminal(">>> " + response.data.hash);
-  } else if(commands[0].toLowerCase() === "addpeer") {
-    setTimeout( function() {
-    axios.get("/peers")
-    .then(function (response) {
-      var msg = response.data.includes(commands[1]) ? "Node was added" : "Node was NOT added";
-      appendToTerminal(">>> " + msg);
-    }).catch(function (error) {
-      appendToTerminal(">>> an error occurred when getting a list of connected nodes " + error);
-    })
-  },1000);
+function addressLackingPort(address) {
+  return !address.includes(":")
+}
+
+function getDefaultPort(){
+  return "6001"
+}
+
+function addPeer(address) {
+  if(addressLackingPort(address)){
+    address = address + ":" + getDefaultPort();
   }
+  console.log("<<< " + address);
+  axios.post('/addpeer', {
+    data: address
+  })
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.log(">>> an error occurred: " + error)
+  });
+
 }
 
 function appendToTerminal(text) {
