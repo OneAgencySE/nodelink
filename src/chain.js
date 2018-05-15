@@ -1,6 +1,6 @@
 const CryptoJS = require('crypto-js');
 const {hexToBinary} = require('./util');
-
+const logger = require('./logger');
 const FIXED_DIFFICULTY = 16
 
 class Block {
@@ -103,6 +103,10 @@ const addBlockToChain = (newBlock) => {
     if (isValidNewBlock(newBlock, getLatestBlock())) {
         blockchain.push(newBlock);
         console.log("New block added.")
+        logger.log({
+            level: 'info',
+            message: newBlock.data
+        })
         return true;
     }
     console.log("The block that was pushed is invalid. Discarding it...")
