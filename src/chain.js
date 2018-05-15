@@ -40,11 +40,14 @@ const generateNextBlock = (blockData) => {
 
 const findBlock = (index, previousHash, timestamp, data, difficulty) => {
     let nonce = 0;
+
     while (true) {
         const hash = calculateHash(
             index, previousHash, timestamp, data, difficulty, nonce
         );
         if (hashMatchesDifficulty(hash, difficulty)) {
+            console.log("Hash calculated for: ", index, previousHash, timestamp, data, difficulty, nonce)
+            console.log("Hash: ", hash)
             return new Block(
                 index, hash, previousHash, timestamp, data, difficulty, nonce
             );

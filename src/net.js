@@ -127,7 +127,7 @@ const handleBlockchainResponse = (receivedBlocks) => {
 }
 
 const broadcastLatest = () => {
-    console.log("Broadcasting new block: " + getLatestBlock())
+    //console.log("Broadcasting new block: " + getLatestBlock())
     broadcast(responseLatestMsg());
 };
 
